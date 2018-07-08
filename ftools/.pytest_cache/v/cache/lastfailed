@@ -1,0 +1,4 @@
+{
+  "tests/ftools/test_mbr.py": true,
+  "tests/test_mbr.py": true
+}
