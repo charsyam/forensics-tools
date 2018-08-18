@@ -5,13 +5,17 @@ from vdrive import Drive
 from vfile import BlockFile
 from schema import Schema
 from utils import Utils
+import pprint
 
 
 def to_decode(byte_arr, decoding):
     if len(byte_arr) == 0:
         return ""
 
-    return byte_arr.decode(decoding)
+    try:
+        return byte_arr.decode(decoding)
+    except:
+        return byte_arr
 
 def to_ucs2_le(byte_arr):
     return to_decode(byte_arr, 'utf-16-le')
@@ -34,6 +38,7 @@ class FAT32(VFS):
         self.bps = self.vbr["bps"]
         self.spc = self.vbr["spc"]
         self.fds = self.rsc + self.fat_size * nfats
+        self.set_block_size(self.bps * self.spc)
 
     def get_fat_info(self, start, fat_idx=0):
         base_sector = self.rsc + fat_idx * self.fat_size
@@ -120,7 +125,7 @@ class FAT32(VFS):
     def strip(self, ucs_str):
         l = len(ucs_str) 
         for i in range(l):
-            if ucs_str[i] == '\uffff' or ucs_str[i] == '\x00':
+            if ucs_str[i] == u'\uffff' or ucs_str[i] == u'\x00':
                 return ucs_str[:i]
 
         return ucs_str
@@ -181,7 +186,7 @@ class FAT32(VFS):
 
         for i in range(0, s, 32):
             d = data[i:i+32]
-            is_lfn = d[11] & 0x0F is 0x0F
+            is_lfn = ord(d[11]) & 0x0F is 0x0F
 
             c = struct.unpack("<QQQQ", d)
             if c[0] == 0 and c[1] == 0 and c[2] == 0 and c[3] == 0:
@@ -206,16 +211,16 @@ if __name__ == '__main__':
     fat32 = FAT32(vdrive)
     files = fat32.list(2)
     for f in files:
-        print(f)
+        pprint.pprint(f)
 
     files = fat32.list(6)
     for f in files:
         print(f)
 
     # 955
-    extends = fat32.get_fat_info(955)
-    f = BlockFile(fat32, 232487, extends)
-    data = f.read(0, 232487)
+    extends = fat32.get_fat_info(508)
+    f = BlockFile(fat32, 275320, extends)
+    data = f.read(0, 275320)
     k = open("1.png", "wb")
     k.write(data)
     k.close()

@@ -1,6 +1,6 @@
 import sys
-from ftools.mbr import TableEntry
-from ftools.vdrive import Drive
+from mbr import TableEntry
+from vdrive import Drive
 
 
 class MBRPartitionFinder(object):
