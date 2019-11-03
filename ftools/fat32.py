@@ -185,7 +185,7 @@ class FAT32(VFS):
 
         for i in range(0, s, 32):
             d = data[i:i+32]
-            is_lfn = ord(d[11]) & 0x0F is 0x0F
+            is_lfn = d[11] & 0x0F is 0x0F
 
             c = struct.unpack("<QQQQ", d)
             if c[0] == 0 and c[1] == 0 and c[2] == 0 and c[3] == 0:
