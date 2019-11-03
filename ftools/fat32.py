@@ -38,7 +38,6 @@ class FAT32(VFS):
         self.bps = self.vbr["bps"]
         self.spc = self.vbr["spc"]
         self.fds = self.rsc + self.fat_size * nfats
-        self.set_block_size(self.bps * self.spc)
 
     def get_fat_info(self, start, fat_idx=0):
         base_sector = self.rsc + fat_idx * self.fat_size
@@ -212,15 +211,3 @@ if __name__ == '__main__':
     files = fat32.list(2)
     for f in files:
         pprint.pprint(f)
-
-    files = fat32.list(6)
-    for f in files:
-        print(f)
-
-    # 955
-    extends = fat32.get_fat_info(508)
-    f = BlockFile(fat32, 275320, extends)
-    data = f.read(0, 275320)
-    k = open("1.png", "wb")
-    k.write(data)
-    k.close()
